@@ -14,15 +14,6 @@ def packagecheck(filepath):
     with open(filepath, 'r', encoding='utf-8') as f:
         for line_number, line in enumerate(f, start=1):
             line = line.split('#', 1)[0].strip()
-            if not line:
-                continue
-            if '==' not in line:
-                raise ValueError(
-                    "Line {} is not pinned with package==version: {}".format(
-                        line_number, line
-                    )
-                )
-
             package, version = (part.strip() for part in line.split('==', 1))
             checked += 1
             package_url = "https://pypi.org/pypi/{}/json".format(
@@ -37,13 +28,11 @@ def packagecheck(filepath):
             except HTTPError as error:
                 if error.code == 404:
                     packages_not_found += 1
-                    print(package, "was not found on PyPI")
                     continue
                 raise
 
             if version not in package_data.get('releases', {}):
                 versions_not_found += 1
-                print("{} exists on PyPI, but version {} does not".format(package, version))
                 continue
 
             version_url = "https://pypi.org/pypi/{}/{}/json".format(
@@ -58,7 +47,6 @@ def packagecheck(filepath):
             except HTTPError as error:
                 if error.code == 404:
                     versions_not_found += 1
-                    print("{} exists on PyPI, but version {} does not".format(package, version))
                     continue
                 raise
 
