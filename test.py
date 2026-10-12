@@ -16,9 +16,7 @@ def packagecheck(filepath):
             line = line.split('#', 1)[0].strip()
             package, version = (part.strip() for part in line.split('==', 1))
             checked += 1
-            package_url = "https://pypi.org/pypi/{}/json".format(
-                quote(package, safe='')
-            )
+            package_url = "https://pypi.org/pypi/{}/json".format(package)
             request = Request(
                 package_url, headers={"User-Agent": "requirements-pypi-checker/1.0"}
             )
